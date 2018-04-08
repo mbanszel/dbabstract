@@ -14,7 +14,7 @@ import (
 	_ "github.com/mattn/go-sqlite3" // side-effects from go-sqlite3
 )
 
-var sqlite3TC = "SELECT name FROM sqlite_master WHERE type='table' AND name='?'"
+var sqlite3TC = "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
 
 type sqlite3DBHolder struct {
 	db     *sql.DB
