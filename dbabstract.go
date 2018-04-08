@@ -54,6 +54,7 @@ type DBHolder interface {
 	// TableExists checks for the existence of a table in the database for that specified driver.
 	// logger should be the function you wish to have used for logging (ie log.Debug)
 	// The query statement for checking if the table exists will be logged
+	// If logging isn't desired, logger should be nil
 	TableExists(table string, logger func(args ...interface{})) (bool, error)
 }
 

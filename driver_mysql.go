@@ -54,11 +54,14 @@ func (s *mysqlDBHolder) Path() string {
 // TableExists checks for the existence of a table in a MySQL database.
 // logger should be the function you wish to have used for logging (ie log.Debug)
 // The query statement for checking if the table exists will be logged
+// If logging isn't desired, logger should be nil
 func (s *mysqlDBHolder) TableExists(table string, logger func(args ...interface{})) (bool, error) {
 	var tName string
 
 	queryStr := s.Format(mysqlTC)
-	logger(queryStr)
+	if logger != nil {
+		logger(queryStr)
+	}
 	stmt, err := s.db.Prepare(queryStr)
 	if err != nil {
 		return false, err
