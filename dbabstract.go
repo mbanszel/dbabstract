@@ -48,6 +48,9 @@ type DBHolder interface {
 	//
 	// Replaces ? with $ or vice versa
 	Format(query string) string
+	// Path returns the path used to connect to the database. This is useful for debug purposes.
+	// the username and password are not stored.
+	Path() string
 	// TableExists checks for the existence of a table in the database for that specified driver.
 	TableExists(table string) (bool, error)
 }

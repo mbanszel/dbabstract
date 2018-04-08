@@ -22,6 +22,7 @@ type mysqlDBHolder struct {
 	db     *sql.DB
 	dbName string
 	driver string
+	path   string
 }
 
 // Close is a wrapper function to sql.DB.Close()
@@ -42,6 +43,12 @@ func (s *mysqlDBHolder) Driver() string {
 // Format makes sure all query arguments are '?' instead of '$' or others.
 func (s *mysqlDBHolder) Format(query string) string {
 	return strings.Replace(query, "$", "?", -1)
+}
+
+// Path returns the path used to connect to the database. This is useful for debug purposes.
+// the username and password are not stored.
+func (s *mysqlDBHolder) Path() string {
+	return s.path
 }
 
 // TableExists checks for the existence of a table in a MySQL database.
@@ -82,6 +89,37 @@ func mysqlBuildPath(opts DBOpts) string {
 	ret := mysql.Config{
 		User:   opts.Username,
 		Passwd: opts.Password,
+		Net:    opts.ConnectType,
+		Addr:   addr,
+		DBName: opts.DBName,
+	}
+
+	return ret.FormatDSN()
+}
+
+// mysqlBuildPathPrivate builds the full path to the MySQL database
+func mysqlBuildPathPrivate(opts DBOpts) string {
+	var addr string
+
+	switch opts.ConnectType {
+	case TCP, TCP4, TCP6:
+		addr = fmt.Sprintf("%s:%d", opts.Host, opts.Port)
+	case UNIX:
+		addr = opts.SocketPath
+	}
+
+	username := opts.Username
+	if len(strings.TrimSpace(username)) != 0 {
+		username = "hidden"
+	}
+	password := opts.Password
+	if len(strings.TrimSpace(password)) != 0 {
+		password = "hidden"
+	}
+
+	ret := mysql.Config{
+		User:   username,
+		Passwd: password,
 		Net:    opts.ConnectType,
 		Addr:   addr,
 		DBName: opts.DBName,
@@ -131,6 +169,7 @@ func newDBHolderMySQL(opts DBOpts) (DBHolder, error) {
 
 	ret.dbName = opts.DBName
 	ret.driver = opts.Driver
+	ret.path = mysqlBuildPathPrivate(opts)
 	ret.db, err = sql.Open("mysql", dbPath)
 	if err != nil {
 		return nil, err

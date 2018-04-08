@@ -19,6 +19,7 @@ var sqlite3TC = "SELECT name FROM sqlite_master WHERE type='table' AND name='?'"
 type sqlite3DBHolder struct {
 	db     *sql.DB
 	driver string
+	path   string
 }
 
 // Close is a wrapper function to sql.DB.Close()
@@ -39,6 +40,12 @@ func (s *sqlite3DBHolder) Driver() string {
 // Format makes sure all query arguments are '?' instead of '$' or others.
 func (s *sqlite3DBHolder) Format(query string) string {
 	return strings.Replace(query, "$", "?", -1)
+}
+
+// Path returns the path used to connect to the database. This is useful for debug purposes.
+// the username and password are not stored.
+func (s *sqlite3DBHolder) Path() string {
+	return s.path
 }
 
 // TableExists checks for the existence of a table in an sqlite3 database.
@@ -111,6 +118,7 @@ func newDBHolderSqlite3(opts DBOpts) (DBHolder, error) {
 
 	ret.driver = opts.Driver
 	ret.db, err = sql.Open("sqlite3", dbFilePath)
+	ret.path = dbFilePath
 	if err != nil {
 		return nil, err
 	}
