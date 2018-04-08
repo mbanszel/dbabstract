@@ -52,7 +52,9 @@ type DBHolder interface {
 	// the username and password are not stored.
 	Path() string
 	// TableExists checks for the existence of a table in the database for that specified driver.
-	TableExists(table string) (bool, error)
+	// logger should be the function you wish to have used for logging (ie log.Debug)
+	// The query statement for checking if the table exists will be logged
+	TableExists(table string, logger func(args ...interface{})) (bool, error)
 }
 
 // dbHolderFactory is called to register a database driver

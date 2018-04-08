@@ -49,10 +49,13 @@ func (s *sqlite3DBHolder) Path() string {
 }
 
 // TableExists checks for the existence of a table in an sqlite3 database.
-func (s *sqlite3DBHolder) TableExists(table string) (bool, error) {
+// logger should be the function you wish to have used for logging (ie log.Debug)
+// The query statement for checking if the table exists will be logged
+func (s *sqlite3DBHolder) TableExists(table string, logger func(args ...interface{})) (bool, error) {
 	var tName string
 
 	queryStr := s.Format(sqlite3TC)
+	logger(queryStr)
 	stmt, err := s.db.Prepare(queryStr)
 	if err != nil {
 		return false, err
