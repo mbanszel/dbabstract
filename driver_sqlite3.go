@@ -17,35 +17,7 @@ import (
 var sqlite3TC = "SELECT name FROM sqlite_master WHERE type='table' AND name=?"
 
 type sqlite3DBHolder struct {
-	db     *sql.DB
-	driver string
-	path   string
-}
-
-// Close is a wrapper function to sql.DB.Close()
-func (s *sqlite3DBHolder) Close() error {
-	return s.db.Close()
-}
-
-// DB returns the pointer to the open SQL database connection
-func (s *sqlite3DBHolder) DB() *sql.DB {
-	return s.db
-}
-
-// Driver returns the configured driver
-func (s *sqlite3DBHolder) Driver() string {
-	return s.driver
-}
-
-// Format makes sure all query arguments are '?' instead of '$' or others.
-func (s *sqlite3DBHolder) Format(query string) string {
-	return strings.Replace(query, "$", "?", -1)
-}
-
-// Path returns the path used to connect to the database. This is useful for debug purposes.
-// the username and password are not stored.
-func (s *sqlite3DBHolder) Path() string {
-	return s.path
+	commonDB
 }
 
 // TableExists checks for the existence of a table in an sqlite3 database.

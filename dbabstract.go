@@ -58,7 +58,7 @@ type DBHolder interface {
 	TableExists(table string, logger func(args ...interface{})) (bool, error)
 }
 
-// dbHolderFactory is called to register a database driver
+// dbHolderFactory is a type of a function called to register a database driver
 type dbHolderFactory func(opts DBOpts) (DBHolder, error)
 
 // NewDBHolder returns an initialized DBHolder for operating on a configured database
